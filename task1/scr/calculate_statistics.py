@@ -42,7 +42,7 @@ def calc_average_word_length(text: str) -> float:
     words_len_in_characters = sum(len(word) for word in words)
     return words_len_in_characters / len(words) if len(words) != 0 else 0
 
-def calc_topK_repeated_Ngrams(text: str, k: int = 10, n: int = 4) -> dict:
+def calc_topK_repeated_Ngrams(text: str, k: int = 10, n: int = 4) -> list:
     text = text.lower()
     text = re.sub("\n", " ", text)
     ngrams = []
@@ -50,7 +50,7 @@ def calc_topK_repeated_Ngrams(text: str, k: int = 10, n: int = 4) -> dict:
     for i in range(len(text) - n + 1):
         ngrams.append(text[i:i + n])
     frequency_dictionary = count_frequency(ngrams)
-    sorted_frequencies = sorted(frequency_dictionary.items, key=lambda item: item[1], reverse=True) #список кортежей
+    sorted_frequencies = sorted(frequency_dictionary.items(), key=lambda item: item[1], reverse=True) #список кортежей
     return sorted_frequencies[:k]
 
 def count_frequency(elements):

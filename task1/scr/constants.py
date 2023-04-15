@@ -14,6 +14,6 @@ THREE_WORDS_ABREBIATION = ["v.i.p.", "p.p.s."]
 
 SENTENCE_PATTERN = r"[.!?\"]+"
 NON_DECLARATIVE_PATTERN = r"[!?]+"
-WORD_PATTERN = r"\b[a-zA-Z\d]+\b"
+WORD_PATTERN = r"\w*[a-zA-Z]\w*"
 NUMBER_PATTERN = r"\b[0-9]+\b\s*"
 DIRECT_SPEECH_PATTERN = r"[\"]([^\"]+)[\"]"
