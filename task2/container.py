@@ -64,10 +64,59 @@ class Container:
             print("No such elements")
 
     def save(self):
-        filename = f''
+        filename = f'{self.current_user}.json'
+        with open(filename, 'w') as f:
+            json.dump(list(self.current_container), f)
+        print("Container saved to file")
 
     def load(self, file=None):
-        pass
+        if file is None:
+            filename = f'{self.current_user}.json'
+        else:
+            filename = file
+        
+        try:
+            with open(filename, 'r') as f:
+                elements_list = json.load(f)
+                for el in elements_list:
+                    self.current_container.add(el)
+            print("Container loaded from file")
+        except FileNotFoundError:
+            print(f'Cannot load {filename}: file not found')
 
     def switch(self, username):
-        pass
+        try:
+            filename = f'{username}.json'
+            open(filename, 'r')
+            self.current_user = username
+            choice = input(f'Welcome back, {username}!\nDo you want to load your \
+                           saved container? (Yes/No):')
+            
+            while choice.lower() != 'yes' or choice.lower()!= 'no':
+                choice = input('Incorrect input! Try again')
+
+            if choice.lower() == 'yes':
+                print(f'Loading container for {username}')
+                self.load()
+            else:
+                self.current_container = set()
+        except FileNotFoundError:
+            choice = input(f'Hello, {username}!\nDo you want to load container \
+                           from file? (Yes/No):')
+            
+            while choice.lower() != 'yes' or choice.lower()!= 'no':
+                choice = input('Incorrect input! Try again')
+            
+            if choice.lower() == 'yes':
+                file = input("Input file name (it should be in this directory):")
+                filename = str(file)
+                try:
+                    open(filename, 'r')
+                    self.current_user = username
+                    self.users[self.current_user] = self.current_container
+                except FileNotFoundError:
+                    print(f'Hello, {username}! Creating a new container')
+                    self.current_container = set()
+                self.load(file=filename)
+            else:
+                self.current_container = set()
