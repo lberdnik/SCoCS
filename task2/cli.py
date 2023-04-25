@@ -1,9 +1,9 @@
 from container import Container
 from constants import COMMANDS_HELP
-from json import JSONDecodeError #WHAT
+from json import JSONDecodeError 
 
 class CLI:
-    container: Container #WHAT
+    container: Container 
 
     def __init__(self):
         self.container = Container()
