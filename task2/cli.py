@@ -1,9 +1,8 @@
 from container import Container
 from constants import COMMANDS_HELP
-from json import JSONDecodeError 
+from json import JSONDecodeError #WHAT
 
 class CLI:
-    container: Container 
 
     def __init__(self):
         self.container = Container()
@@ -14,13 +13,13 @@ class CLI:
         self.container.switch(username=username)
 
         while True:
-            command = input("\nType command. Type 'help' to see all available commands")
+            command = input("Type command. Type 'help' to see all available commands\n")
             command_split = command.split()
             try:
                 if command_split[0] == "add":
-                    if len(command_split) == 1:
-                        print("Too few arguments for command 'add <key> [key, …]'")
-                    else:
+                    # if len(command_split) == 1:
+                    #     print("Too few arguments for command 'add <key> [key, …]'")
+                    # else:
                         self.container.add(*command_split[1:])
                 elif command_split[0] == "remove":
                     if len(command_split) == 1:
@@ -47,13 +46,13 @@ class CLI:
                     else:
                         choice = input(f'Do you want to save your container? (Yes/No): ')
 
-                        while choice.lower() != 'yes' or choice.lower() != 'no':
+                        while choice.lower() != 'yes' and choice.lower() != 'no':
                             choice = input('Incorrect input! Try again')
 
                         if choice == 'no':
                             self.container.current_container = set()
                         else:
-                            print(f'Saving container for {self.container.current_user}.')
+                            print(f'Saving container for {self.container.current_user}')
                         self.container.users[self.container.current_user] = self.container.current_container                     
 
                         new_username = input("Enter the new username: ")
@@ -79,7 +78,7 @@ class CLI:
                     else:
                         choice = input(f'Do you want to save your container? (Yes/No): ')
 
-                        while choice.lower() != 'yes' or choice.lower() != 'no':
+                        while choice.lower() != 'yes' and choice.lower() != 'no':
                             choice = input('Incorrect input! Try again')
 
                         if choice == 'no':
@@ -91,7 +90,7 @@ class CLI:
                         print("Exiting CLI program")
                         break
                 else:
-                    print(f'{command_split[0]} is not a command. Type \'help\' to see all available commands')
+                    print(f'{command_split[0]} is not a command')
             except IndexError:
                 print("Command wasn't found")
             except KeyError:

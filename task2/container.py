@@ -1,15 +1,6 @@
 import re
 import json
 
-""" add <key> [key, …]  add one or more elements to the container (if the element is already in there then don’t add);
-remove <key>  delete key from container;
-find  <key> [key, …] check if the element is presented in the container, print each found or “No such elements” if nothing is;
-list print all elements of container;
-grep <regex>  check the value in the container by regular expression, print each found or “No such elements” if nothing is;
-save/load  save container to file/load container from file;
-switch  switches to another user. """
-
-
 class Container:
     def __init__(self):
         self.users = {}
@@ -46,7 +37,7 @@ class Container:
 
     def list(self):
         if self.current_container:
-            print("All elements of container:")
+            print("All elements of container: ")
             for key in self.current_container:
                 print(key)
         else:
@@ -73,7 +64,7 @@ class Container:
         if file is None:
             filename = f'{self.current_user}.json'
         else:
-            filename = file
+            filename = f'{file}'
         
         try:
             with open(filename, 'r') as f:
@@ -89,10 +80,9 @@ class Container:
             filename = f'{username}.json'
             open(filename, 'r')
             self.current_user = username
-            choice = input(f'Welcome back, {username}!\nDo you want to load your \
-                           saved container? (Yes/No):')
+            choice = input(f'Welcome back, {username}!\nDo you want to load your saved container? (Yes/No): ')
             
-            while choice.lower() != 'yes' or choice.lower()!= 'no':
+            while choice.lower() != 'yes' and choice.lower()!= 'no':
                 choice = input('Incorrect input! Try again')
 
             if choice.lower() == 'yes':
@@ -101,14 +91,14 @@ class Container:
             else:
                 self.current_container = set()
         except FileNotFoundError:
-            choice = input(f'Hello, {username}!\nDo you want to load container \
-                           from file? (Yes/No):')
+            choice = input(f'Hello, {username}!\nDo you want to load container from file? (Yes/No): ')
+            self.current_user = username
             
-            while choice.lower() != 'yes' or choice.lower()!= 'no':
+            while choice.lower() != 'yes' and choice.lower()!= 'no':
                 choice = input('Incorrect input! Try again')
             
             if choice.lower() == 'yes':
-                file = input("Input file name (it should be in this directory):")
+                file = input("Input file name (it should be in this directory): ")
                 filename = str(file)
                 try:
                     open(filename, 'r')
