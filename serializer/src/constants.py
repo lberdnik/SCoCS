@@ -33,7 +33,7 @@ SET_TYPE = 'set'
 DICT_TYPE = 'dict'
 TUPLE_TYPE = 'tuple'
 
-NSERIALIZABLE_CODE_TYPES = (
+UNSERIALIZABLE_CODE_TYPES = (
     "co_positions",
     "co_lines",
     "co_exceptiontable",

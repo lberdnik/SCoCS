@@ -2,7 +2,6 @@ import base64
 import builtins
 import inspect
 import math 
-import src.complement
 
 from .complement import get_fathers_class
 
@@ -83,7 +82,7 @@ class Encoder:
         func_name = obj.__name__
         func_defaults = obj.__defaults__
         func_dict = obj.__dict__
-        func_class = get_fathers_class_for_method(obj)
+        func_class = get_fathers_class(obj)
         func_closure = (
             tuple(cell for cell in obj.__closure__ if cell.cell_contents is not func_class)
             if obj.__closure__ is not None
