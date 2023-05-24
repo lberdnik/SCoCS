@@ -1,12 +1,16 @@
-from scr.constants import JSON_DATA_TYPE, XML_DATA_TYPE
-from scr.json_serializer import JsonSerializer
-from scr.xml_serializer import XmlSerializer
+from .constants import JSON_DATA_TYPE, UNKNOWN_TYPE_ERROR, XML_DATA_TYPE
+from .json_serializer import JsonSerializer
+from .xml_serializer import XmlSerializer
 
-class SerializerFactory:
-    @staticmethod #
-    def create_serializer(serializer_type):
-        if serializer_type == JSON_DATA_TYPE:
+
+class Factory:
+    @staticmethod
+    def create_serializer(data_format):
+        if data_format == JSON_DATA_TYPE:
             return JsonSerializer()
-        
-        elif serializer_type == XML_DATA_TYPE:
+
+        elif data_format == XML_DATA_TYPE:
             return XmlSerializer()
+
+        else:
+            raise Exception(UNKNOWN_TYPE_ERROR)

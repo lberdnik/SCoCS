@@ -19,6 +19,7 @@ UNSERIALIZERABLE_TYPES = (
 SAME_TYPE_ERROR = 'Same         type of objects!'
 
 UNSUPPORTED_TYPE_ERROR = 'Unsupported data type: %s (%s)'
+UNKNOWN_TYPE_ERROR = 'Unknown type of serialization!'
 
 ITERATOR_TYPE = 'iterator'
 BYTES_TYPE = 'bytes'

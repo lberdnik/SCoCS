@@ -4,10 +4,11 @@ import inspect
 import math 
 import src.complement
 
-from src.constants import DEFAULT_PRIMITIVE_TYPES, UNSERIALIZERABLE_TYPES, \
-    UNSERIALIZERABLE_TYPES, UNSERIALIZERABLE_TYPES, \
+from .complement import get_fathers_class
+
+from .constants import DEFAULT_PRIMITIVE_TYPES, UNSERIALIZABLE_CODE_TYPES, UNSERIALIZABLE_TYPES, \
     ITERATOR_TYPE, CODE_TYPE, CELL_TYPE, MODULE_TYPE, FUNCTION_TYPE, \
-    BYTES_TYPE, CLASS_TYPE, OBJ_TYPE, TUPLE_TYPE, SET_TYPE
+    BYTES_TYPE, CLASS_TYPE, OBJ_TYPE, TUPLE_TYPE, SET_TYPE, UNSERIALIZABLE_DUNDER
 
 from types import ModuleType, CellType, FunctionType, MethodType, CodeType
 
