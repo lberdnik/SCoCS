@@ -4,9 +4,7 @@ JSON_DATA_TYPE = '.json'
 
 XML_DATA_TYPE = '.xml'
 
-UNKNOWN_DATA_TYPE = 'Unknown type of serialization'
-
-DEFAULT_PRIMITIVE_TYPES = (int, bool, str, float, types.NoneType)
+DEFAULT_PRIMITIVE_TYPES = (int, bool, str, float, type(None))
 
 UNSERIALIZERABLE_TYPES = (
     types.WrapperDescriptorType,    #
@@ -32,10 +30,27 @@ CLASS_TYPE = 'type'
 SET_TYPE = 'set'
 DICT_TYPE = 'dict'
 TUPLE_TYPE = 'tuple'
+PROPERTY_TYPE = 'property'
 
 UNSERIALIZABLE_CODE_TYPES = (
     "co_positions",
     "co_lines",
     "co_exceptiontable",
     "co_lnotab",
+)
+
+UNSERIALIZABLE_DUNDER = (
+    "__mro__",
+    "__base__",
+    "__basicsize__",
+    "__class__",
+    "__dictoffset__",
+    "__name__",
+    "__qualname__",
+    "__text_signature__",
+    "__itemsize__",
+    "__flags__",
+    "__weakrefoffset__",
+    "__objclass__",
+    "__doc__"
 )

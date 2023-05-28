@@ -1,4 +1,3 @@
-
 from .constants import UNKNOWN_TYPE_ERROR
 
 from .encoder import Encoder

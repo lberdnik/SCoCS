@@ -5,7 +5,7 @@ import math
 
 from .complement import get_fathers_class
 
-from .constants import DEFAULT_PRIMITIVE_TYPES, UNSERIALIZABLE_CODE_TYPES, UNSERIALIZABLE_TYPES, \
+from .constants import DEFAULT_PRIMITIVE_TYPES, UNSERIALIZABLE_CODE_TYPES, PROPERTY_TYPE, \
     ITERATOR_TYPE, CODE_TYPE, CELL_TYPE, MODULE_TYPE, FUNCTION_TYPE, \
     BYTES_TYPE, CLASS_TYPE, OBJ_TYPE, TUPLE_TYPE, SET_TYPE, UNSERIALIZABLE_DUNDER
 
@@ -24,11 +24,11 @@ class Encoder:
         if isinstance(obj, bytes):
             return cls._encode_bytes(obj)
         if isinstance(obj, list):
-            return type(obj)((cls.convert(item) for item in obj)) 
+            return type(obj)((cls.encode(item) for item in obj)) 
         if isinstance(obj, (tuple, set)):
             return cls._encode_collection(obj)
         if isinstance(obj, dict):
-            return {key: cls.convert(value) for key, value in obj.items()}
+            return {key: cls.encode(value) for key, value in obj.items()}
         if isinstance(obj, (FunctionType, MethodType)):
             return cls._encode_function(obj)
         if isinstance(obj, type):          
@@ -39,18 +39,20 @@ class Encoder:
             return cls._encode_code(obj)
         if isinstance(obj, object):
             return cls._encode_object(obj)
+        if isinstance(obj, property):
+            return cls._encode_property(obj)
     
     @classmethod
     def decode(cls, obj):
         if isinstance(obj, DEFAULT_PRIMITIVE_TYPES):
             return obj
         if isinstance(obj, list):
-            return type(obj)((cls.deconvert(item) for item in obj))
+            return type(obj)((cls.decode(item) for item in obj))
         if isinstance(obj, dict):
             type_to_decode = cls._get_type(obj) 
 
             if type_to_decode is None:          
-                return {key: cls.deconvert(value) for key, value in obj.items()}
+                return {key: cls.decode(value) for key, value in obj.items()}
             if type_to_decode == BYTES_TYPE:
                 return cls._decode_bytes(obj)
             if type_to_decode == FUNCTION_TYPE:
@@ -69,11 +71,13 @@ class Encoder:
                 return cls._decode_collection(obj)
             if type_to_decode == OBJ_TYPE:
                 return cls._decode_object(obj)
+            if type_to_decode == PROPERTY_TYPE:
+                return cls._decode_property(obj)
         return obj
     
     @classmethod
     def _encode_collection(cls, obj):
-        data = [cls.convert(item) for item in obj]
+        data = [cls.encode(item) for item in obj]
         return cls._create_dict(data, type(obj).__name__.lower())
 
     @classmethod
@@ -89,14 +93,14 @@ class Encoder:
             else tuple()
         )
         func_globs = {
-            key: cls.convert(value)
+            key: cls.encode(value)
             for key, value in obj.__globals__.items()
             if key in obj.__code__.co_names
             and value is not func_class
             and key != obj.__code__.co_name
         }
 
-        encoded_func = cls.convert(
+        encoded_func = cls.encode(
             dict(
                 code=func_code,
                 name=func_name,
@@ -111,14 +115,14 @@ class Encoder:
     @classmethod
     def _encode_class(cls, obj):
         data = {
-            attr: cls.convert(getattr(obj, attr))
+            attr: cls.encode(getattr(obj, attr))
             for attr, value in inspect.getmembers(obj) 
             if attr not in UNSERIALIZABLE_DUNDER
-            and type(value) not in UNSERIALIZABLE_TYPES
+            and type(value) not in UNSERIALIZABLE_CODE_TYPES
         }
 
         data["__bases__"] = [
-            cls.convert(base) for base in obj.__bases__ if base != object
+            cls.encode(base) for base in obj.__bases__ if base != object
         ]
 
         data["__name__"] = obj.__name__
@@ -128,9 +132,9 @@ class Encoder:
     @classmethod
     def _encode_object(cls, obj):
         data = {
-            '__class__': cls.convert(obj.__class__),
+            '__class__': cls.encode(obj.__class__),
             'attrs': {
-                attr: cls.convert(value)
+                attr: cls.encode(value)
                 for attr, value in inspect.getmembers(obj)
                 if not attr.startswith('__')
                 and not isinstance(value, FunctionType)
@@ -145,7 +149,7 @@ class Encoder:
     
     @classmethod
     def _encode_cell(cls, obj):     
-        data = cls.convert(obj.cell_contents)
+        data = cls.encode(obj.cell_contents)
         return cls._create_dict(data, CELL_TYPE)
 
     @classmethod
@@ -153,7 +157,7 @@ class Encoder:
         attrs = [attr for attr in dir(obj) if attr.startswith('co')]
 
         code_dict = {
-            attr: cls.convert(getattr(obj, attr))
+            attr: cls.encode(getattr(obj, attr))
             for attr in attrs
             if attr not in UNSERIALIZABLE_CODE_TYPES
         }
@@ -162,20 +166,20 @@ class Encoder:
 
     @classmethod
     def _encode_iterator(cls, obj): #
-        data = list(map(cls.convert, obj))
+        data = list(map(cls.encode, obj))
         return cls._create_dict(data, ITERATOR_TYPE)
 
     @classmethod
     def _encode_class(cls, obj):
         data = {
-            attr: cls.convert(getattr(obj, attr))
+            attr: cls.encode(getattr(obj, attr))
             for attr, value in inspect.getmembers(obj) 
             if attr not in UNSERIALIZABLE_DUNDER
-            and type(value) not in UNSERIALIZABLE_TYPES
+            and type(value) not in UNSERIALIZABLE_CODE_TYPES
         }
 
         data["__bases__"] = [
-            cls.convert(base) for base in obj.__bases__ if base != object
+            cls.encode(base) for base in obj.__bases__ if base != object
         ]
 
         data["__name__"] = obj.__name__
@@ -188,14 +192,19 @@ class Encoder:
         return cls._create_dict(data, BYTES_TYPE)
     
     @classmethod
+    def _encode_property(cls, obj):
+        data = dict(fget=cls.encode(obj.fget), fset=cls.encode(obj.fset), fdel=cls.encode(obj.fdel))
+        return cls._create_dict(data, PROPERTY_TYPE)
+    
+    @classmethod
     def _decode_collection(cls, obj):
         data = cls._get_data(obj)
         collection = getattr(builtins, cls._get_type(obj).lower())
-        return collection((cls.deconvert(item) for item in data))
+        return collection((cls.decode(item) for item in data))
 
     @classmethod
     def _decode_function(cls, obj):
-        encoded_function = cls.deconvert(cls._get_data(obj))
+        encoded_function = cls.decode(cls._get_data(obj))
 
         func_dict = encoded_function.pop('func_dict')
 
@@ -208,10 +217,10 @@ class Encoder:
     def _decode_class(cls, obj):
         data = cls._get_data(obj)
 
-        class_bases = tuple(cls.deconvert(base) for base in data.pop('__bases__'))
+        class_bases = tuple(cls.decode(base) for base in data.pop('__bases__'))
 
         class_dict = {
-            attr: cls.deconvert(value)
+            attr: cls.decode(value)
             for attr, value in data.items()
             if not (isinstance(value, dict) and cls._get_type(value) == FUNCTION_TYPE)
         }
@@ -221,11 +230,11 @@ class Encoder:
         for key, value in data.items():
             if isinstance(value, dict) and cls._get_type(value) == FUNCTION_TYPE:
                 try:
-                    function = cls.deconvert(value)
+                    function = cls.decode(value)
                 except ValueError:
                     closure = cls._get_data(value)['closure']
                     cls._get_data(closure).append(cls._make_cell(decoded_class))
-                    function = cls.deconvert(value)
+                    function = cls.decode(value)
                 function.__globals__.update({decoded_class.__name__: decoded_class})
 
                 if value.get('is_method'):
@@ -237,14 +246,19 @@ class Encoder:
     @classmethod
     def _decode_object(cls, obj):
         data = cls._get_data(obj)
-        obj_class = cls.deconvert(data['__class__'])
+        obj_class = cls.decode(data['__class__'])
 
         decoded_obj = object.__new__(obj_class)
         decoded_obj.__dict__ = {
-            key: cls.deconvert(value) for key, value in data['attrs'].items()
+            key: cls.decode(value) for key, value in data['attrs'].items()
         }
 
         return decoded_obj
+
+    @classmethod
+    def _decode_property(cls, obj):
+        data = cls.decode(cls._get_data(obj))
+        return property(**data)
 
     @classmethod
     def _decode_module(cls, obj):
@@ -252,7 +266,7 @@ class Encoder:
     
     @classmethod
     def _decode_cell(cls, obj):     
-        return cls._make_cell(cls.deconvert(cls._get_data(obj)))
+        return cls._make_cell(cls.decode(cls._get_data(obj)))
 
     @classmethod
     def _decode_code(cls, obj):     
@@ -261,13 +275,13 @@ class Encoder:
         def func():
             pass
 
-        code_dict = cls.deconvert(data)
+        code_dict = cls.decode(data)
         return func.__code__.replace(**code_dict)
 
     @classmethod
     def _decode_iterator(cls, obj): 
         data = cls._get_data(obj)
-        return iter(cls.deconvert(value) for value in data)
+        return iter(cls.decode(value) for value in data)
 
     @classmethod
     def _decode_bytes(cls, obj: bytes): 
