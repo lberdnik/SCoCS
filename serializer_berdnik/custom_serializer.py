@@ -1,5 +1,8 @@
 import sys
-from .factory import Factory
+
+from .factory import SerializerFactory
+
+
 def main():
     args = sys.argv
 
@@ -14,8 +17,8 @@ def main():
     #     exit()
 
     try:
-        source_serializer = Factory.create_serializer(format_from)
-        result_serializer = Factory.create_serializer(format_to)
+        source_serializer = SerializerFactory.create_serializer(format_from)
+        result_serializer = SerializerFactory.create_serializer(format_to)
     except Exception as err:
         print(err)
         exit()
@@ -27,7 +30,3 @@ def main():
     except Exception as err:
         print(err)
         exit()
-
-
-if __name__ == '__main__':
-    main()

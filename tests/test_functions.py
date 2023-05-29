@@ -1,189 +1,205 @@
-import unittest
 import math
+import unittest
 
-from serializer.src.factory import Factory
-
-JSON_DATATYPE = '.json'
-XML_DATATYPE = '.xml'
-GLOBAL_VALUE = 19
-
-json_serializer = Factory.create_serializer(JSON_DATATYPE)
-xml_serializer = Factory.create_serializer(XML_DATATYPE)
+from serializer_berdnik.encoder.encoder import Encoder
 
 
-def simple_func():
-    return 17
+def return_5():
+    return 5
 
 
-def recursion_func(x):
+def recursion(x):
     if x < 2:
         return 1
-    return recursion_func(x - 1) * x
+
+    return recursion(x - 1) * x
 
 
-def divide_func(x):
-    return x // (x - 2)
+def square(value):
+    return value * value
 
 
-def sqrt_func(x):
-    return math.sqrt(x)
+def sqrt(value):
+    return math.sqrt(value)
 
 
-def other_function():
-    return simple_func()
+def function_use_return_5():
+    return return_5()
 
 
-def func_with_global():
-    return GLOBAL_VALUE * 2
+GLOBAL_VAR = 10
 
 
-def decorator(function):
+def function_use_global_value():
+    return GLOBAL_VAR
+
+
+class TestFunction(unittest.TestCase):
+    def test_without_params(self):
+        decoded_function = Encoder.decode(Encoder.encode(return_5))
+
+        result = return_5()
+        result_to_test = decoded_function()
+
+        return self.assertEqual(result, result_to_test)
+
+    def test_with_params(self):
+        decoded_function = Encoder.decode(Encoder.encode(square))
+
+        x = 5
+        result = square(x)
+        result_to_test = decoded_function(x)
+
+        return self.assertEqual(result, result_to_test)
+
+    def test_with_lib(self):
+        encoded = Encoder.encode(sqrt)
+        decoded_function = Encoder.decode(encoded)
+
+        x = 5
+        result = sqrt(x)
+        result_to_test = decoded_function(x)
+
+        return self.assertEqual(result, result_to_test)
+
+    def test_recursion(self):
+        decoded_function = Encoder.decode(Encoder.encode(recursion))
+
+        value = 5
+        result = recursion(value)
+        result_to_test = decoded_function(value)
+
+        return self.assertEqual(result, result_to_test)
+
+    def test_lambda(self):
+        test_function = lambda value: value * value * value
+        decoded_function = Encoder.decode(Encoder.encode(test_function))
+
+        x = 5
+        result = test_function(x)
+        result_to_test = decoded_function(x)
+
+        return self.assertEqual(result, result_to_test)
+
+    def test_function_use_another_function(self):
+        decoded_function = Encoder.decode(Encoder.encode(function_use_return_5))
+
+        result = 5
+        result_to_test = decoded_function()
+
+        return self.assertEqual(result, result_to_test)
+
+    def test_function_use_global_value(self):
+        decoded_function = Encoder.decode(Encoder.encode(function_use_global_value))
+
+        result = GLOBAL_VAR
+        result_to_test = decoded_function()
+
+        return self.assertEqual(result, result_to_test)
+
+
+def double_result(func):
     def wrapper(*args, **kwargs):
-        value = function(*args, **kwargs)
-        return value / 3 + 32
+        value = func(*args, **kwargs)
+        return value * 2
 
     return wrapper
 
 
-@decorator
-def decorated():
-    return 22 + 1
-
-
-lambda_function = lambda x: (x ** x) // 3
-
-
-def top_function():
-    val = 32
-
-    def closure():
-        nonlocal val
-        val += 1
-        return val
-    return closure
-
-
-class TestFunctions(unittest.TestCase):
-    def test_simple_function(self):
-        json_decoded = json_serializer.loads(json_serializer.dumps(simple_func))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(simple_func))
-
-        result = simple_func()
-        json_result = json_decoded()
-        xml_result = xml_decoded()
-
-        return self.assertEqual(result, json_result, xml_result)
-
-    def test_func_with_params(self):
-        json_decoded = json_serializer.loads(json_serializer.dumps(divide_func))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(divide_func))
-
-        x = 21
-        result = divide_func(x)
-        json_result = json_decoded(x)
-        xml_result = xml_decoded(x)
-
-        return self.assertEqual(result, json_result, xml_result)
-
-    def test_func_with_lib(self):
-        json_decoded = json_serializer.loads(json_serializer.dumps(sqrt_func))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(sqrt_func))
-
-        x = 5
-        result = sqrt_func(x)
-        json_result = json_decoded(x)
-        xml_result = xml_decoded(x)
-
-        return self.assertEqual(result, json_result, xml_result)
-
-    def test_recursion_func(self):
-        json_decoded = json_serializer.loads(json_serializer.dumps(recursion_func))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(recursion_func))
-
-        x = 33
-        result = recursion_func(x)
-        json_result = json_decoded(x)
-        xml_result = xml_decoded(x)
-
-        return self.assertEqual(result, json_result, xml_result)
-
-    def test_lambda(self):
-        json_decoded = json_serializer.loads(json_serializer.dumps(lambda_function))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(lambda_function))
-
-        x = 21
-        result = lambda_function(x)
-        json_result = json_decoded(x)
-        xml_result = xml_decoded(x)
-
-        return self.assertEqual(result, json_result, xml_result)
-
-    def test_other_function(self):
-        json_decoded = json_serializer.loads(json_serializer.dumps(other_function))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(other_function))
-
-        result = other_function()
-        json_result = json_decoded()
-        xml_result = xml_decoded()
-
-        return self.assertEqual(result, json_result, xml_result)
-
-    def test_func_with_global_value(self):
-        json_decoded = json_serializer.loads(json_serializer.dumps(func_with_global))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(func_with_global))
-
-        result = func_with_global()
-        json_result = json_decoded()
-        xml_result = xml_decoded()
-
-        return self.assertEqual(result, json_result, xml_result)
+@double_result
+def doubled():
+    return 5
 
 
 class TestFunctionWrappers(unittest.TestCase):
     def test_decorator(self):
-        json_decoded = json_serializer.loads(json_serializer.dumps(decorator))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(decorator))
+        encoded = Encoder.encode(double_result)
+        decoded_function = Encoder.decode(encoded)
 
-        @json_decoded
-        def json_func():
-            return 22+1
+        @decoded_function
+        def function():
+            return 5
 
-        @xml_decoded
-        def xml_func():
-            return 22+1
+        result = 10
+        result_to_test = function()
 
-        result = decorated()
-        json_result = json_func()
-        xml_result = xml_func()
+        return self.assertEqual(result, result_to_test)
 
-        return self.assertEqual(result, json_result, xml_result)
+    def test_decorated_function(self):
+        encoded = Encoder.encode(doubled)
+        decoded_function = Encoder.decode(encoded)
 
-    def test_decorated_func(self):
-        json_decoded = json_serializer.loads(json_serializer.dumps(decorated))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(decorated))
+        result = 10
+        result_to_test = decoded_function()
 
-        result = decorated()
-        json_result = json_decoded()
-        xml_result = xml_decoded()
-
-        return self.assertEqual(result, json_result, xml_result)
+        return self.assertEqual(result, result_to_test)
 
 
-class TestClosure(unittest.TestCase):
-    def test_closure_function(self):
-        closure = top_function()
-        json_decoded = json_serializer.loads(json_serializer.dumps(closure))
-        xml_decoded = xml_serializer.loads(xml_serializer.dumps(closure))
+def top_level():
+    a = 10
 
-        result = 33
-        json_result = json_decoded()
-        xml_result = xml_decoded()
+    def closure():
+        nonlocal a
+        a += 1
+        return a
 
-        self.assertEqual(result, json_result, xml_result)
+    return closure
 
-        result = 34
-        json_result = json_decoded()
-        xml_result = xml_decoded()
 
-        return self.assertEqual(result, json_result, xml_result)
+class TestClosures(unittest.TestCase):
+    def test_function_with_closure(self):
+        closure = top_level()
+        encoded = Encoder.encode(closure)
+        decoded_function = Encoder.decode(encoded)
 
+        result = 11
+        result_to_test = decoded_function()
+
+        self.assertEqual(result, result_to_test)
+
+        result = 12
+        result_to_test = decoded_function()
+
+        return self.assertEqual(result, result_to_test)
+
+
+iterator = iter([1, 2, 3])
+
+
+def gen():
+    yield 1
+    yield 2
+    yield 3
+
+
+class TestIterators(unittest.TestCase):
+    def test_iter(self):
+        encoded = Encoder.encode(iterator)
+        decoded_iter = Encoder.decode(encoded)
+
+        result = [1, 2, 3]
+        result_to_test = list(decoded_iter)
+
+        return self.assertSequenceEqual(result, result_to_test)
+
+    def test_generator_function(self):
+        encoded = Encoder.encode(gen)
+        decoded_function = Encoder.decode(encoded)
+
+        result = [1, 2, 3]
+        result_to_test = list(decoded_function())
+
+        return self.assertSequenceEqual(result, result_to_test)
+
+    def test_generator_obj(self):
+        encoded = Encoder.encode(gen())
+        decoded_gen = Encoder.decode(encoded)
+
+        result = [1, 2, 3]
+        result_to_test = list(decoded_gen)
+
+        return self.assertSequenceEqual(result, result_to_test)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,6 +1,6 @@
 import math
 import unittest
-from serializer.src.factory import Factory
+from serializer_berdnik.factory.serializer_factory import Factory
 
 JSON_DATATYPE = '.json'
 XML_DATATYPE = '.xml'
@@ -83,3 +83,6 @@ class TestSimpleObjects(unittest.TestCase):
         xml_decoded = xml_serializer.loads(xml_serializer.dumps(PI))
 
         return self.assertEqual(PI, json_decoded, xml_decoded)
+
+if __name__ == '__main__':
+    unittest.main()

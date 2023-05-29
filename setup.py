@@ -1,13 +1,13 @@
 from setuptools import setup
 
 setup(
-    name='serializer',
+    name='serializer_berdnik',
     version='0.0.1',
     packages=[
-        "serializer.src"
+        "serializer_berdnik.encoder"
     ],
     license='MIT',
     author='lberdnik',
     author_email='lberdnikk2@gmail.com',
-    description='Python JSON and XML serializer',
+    description='Python JSON and XML serializer_berdnik',
 )
