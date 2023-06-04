@@ -1,7 +1,26 @@
-{% extends 'base.html' %}
+{% extends 'zoo/base.html' %}
 
 {% block title %}
     Главная
 {% endblock %}
 
 {% block content %}
+
+    <style>
+        table {
+            /* границы ячеек объединены */
+            border-collapse: collapse;
+            width: 700px;
+        }
+
+        /* селектор для ячеек таблицы */
+        td,
+        th {
+            border: 1px solid black;
+        }
+    </style>
+
+    <div>
+        <h1>Zooland — главная страница</h1>
+    </div>
+{% endblock %}
