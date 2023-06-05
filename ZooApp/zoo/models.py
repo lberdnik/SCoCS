@@ -1,15 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-class Food(models.Model):
+class Food(models.Model): # вид корма
 
     food = models.CharField("food", max_length=256)
 
-class Complex(models.Model):
+class Complex(models.Model): 
 
     complex_name = models.CharField("complex_name", max_length=128)
     
-class Placement(models.Model):
+class Placement(models.Model): 
     
     name = models.CharField("name", max_length=128, default="")
     number = models.IntegerField("number")
@@ -17,7 +17,7 @@ class Placement(models.Model):
     heating = models.BooleanField("heating")        # наличие отопления
     complex_area = models.ForeignKey(Complex, on_delete=models.CASCADE)
 
-class Country(models.Model):
+class Country(models.Model): #
 
     country = models.CharField("country", max_length=64, unique=True)
 
@@ -47,11 +47,11 @@ class Animal(models.Model):
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
     kind = models.ForeignKey(Kind, on_delete=models.SET_NULL, null=True)    # семейство
 
-class Job(models.Model):
+class Job(models.Model): # должности
 
     job_title = models.CharField("job_title", max_length=128)
 
-class Employee(models.Model):
+class Employee(models.Model): # сотрудники
 
     firstname = models.CharField("firstname", max_length=128)
     lastname = models.CharField("lastname", max_length=128)
