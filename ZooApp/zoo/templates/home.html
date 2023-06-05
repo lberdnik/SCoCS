@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Главная
+{% endblock %}
+
+{% block content %}
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 700px;
+        }
+        td, th {
+            border: 1px solid black;
+        }
+    </style>
+
+    <div>
+        <h1>Zooland — главная страница</h1>
+
+        {% if is_superuser %}
+            <a href='logout'>Выйти из системы</a>
+            <h2>Режим суперпользователя</h2>
+            <p><b>Сотрудники: </b></p>
+            <table>                      
+                <tr>
+                    <th>ФИО</th>
+                    <th>Должность</th>
+                    <th>Номер телефона</th>
+                </tr>               
+            {% for emp in employee %}
+                <tr>
+                    <td>{{emp.lastname}} {{emp.firstname}} {{emp.patronymic}}</td>
+                    <td>{{emp.job.job_title}}</td>
+                    <td>{{emp.phone}}</td>
+                </tr>
+            {% endfor %}
+
+            </table>
+            <br><br>
+            <p><b>Животные: </b></p>
+            <table>                      
+                <tr>
+                    <th>Вид</th>
+                    <th>Возраст, лет</th>
+                    <th>Пол</th>
+                    <th>Дата поступления</th>
+                </tr>               
+            {% for animal in animals %}
+                <tr>
+                    <td>{{animal.kind.kind}}</td>
+                    <td>{% if animal.age %}{{animal.age}}{% else %}—{% endif %}</td>
+                    <td>{% if animal.gender == 'M' %}Мужской{% else %}Женский{% endif %}</td>
+                    <td>{{animal.arrival_date}}</td>
+                </tr>
+            {% endfor %}
+
+            </table>
+
+            <br><br>
+            <p><b>Зоны и комлпексы: </b></p>
+            <table>                      
+                <tr>
+                    <th>Зона</th>
+                    <th>Номер</th>
+                    <th>Резервуар</th>
+                    <th>Отопление</th>
+                    <th>Комплекс</th>
+                </tr>               
+            {% for placement in placements %}
+                <tr>
+                    <td>{{placement.name}}</td>
+                    <td>{{placement.number}}</td>
+                    <td>{% if placement.reservoir %} Есть {% else %} Нет {% endif %}</td>
+                    <td>{% if placement.heating %} Есть {% else %} Нет {% endif %}</td>
+                    <td>{{placement.complex_area.complex_name}}</td>
+                </tr>
+            {% endfor %}
+
+            </table>
+        {% else %}
+            {% if is_authorized %}
+                <a href='logout'>Выйти из системы</a>
+                <p><b>ФИО:</b> {{employee.lastname}} {{employee.firstname}} {{employee.patronymic}} </p>
+                <p><b>Должность:</b> {{employee.job.job_title}}</p>
+                <p><b>Номер телефона:</b> {{employee.phone}}</p>
+                <p><b>Пол:</b> {{employee.gender}}</p>
+                <p><b>Национальность:</b> {{employee.nationality}}</p>
+                {% if employee.animals.all %}
+                    <p><b>Работает со следующими животными: </b></p>
+                    <table>                      
+                        <tr>
+                            <th>Вид</th>
+                            <th>Возраст, лет</th>
+                            <th>Пол</th>
+                            <th>Дата поступления</th>
+                            <th>Зона</th>
+                            <th>Номер зоны</th>
+                            <th>Комплекс</th>
+                        </tr>               
+                    {% for animal in employee.animals.all %}  
+                        <tr>
+                            <td>{{animal.kind.kind}}</td>
+                            <td>{% if animal.age %}{{animal.age}}{% else %}—{% endif %}</td>
+                            <td>{% if animal.gender == 'M' %}Мужской{% else %}Женский{% endif %}</td>
+                            <td>{{animal.arrival_date}}</td>
+                            <td>{{animal.placement.name}}</td>
+                            <td>{{animal.placement.number}}</td>
+                            <td>{{animal.placement.complex_area.complex_name}}</td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+
+                    <br><br>
+                    <p><b>Питание:</b></p>
+                    <table>                      
+                        <tr>
+                            <th>Вид</th>
+                            <th>Чем кормить</th>
+                        </tr>               
+                    {% for animal in employee.animals.all %}  
+                        <tr>
+                            <td>{{animal.kind.kind}}</td>
+                            <td>
+                                <ul>                           
+                                {% for food in animal.food.all %}
+                                    <li>{{food.food}}</li>
+                                {% endfor %}
+                                </ul>
+                                </td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                {% endif %}
+ 
+            {% else %}
+                <a href='login'>Войти в систему</a>
+            {% endif %}                
+            <h2>Животные зоопарка: </h2>
+            <p><b>Всего видов:</b> {{animals.count}}</p>
+            {% for animal in animals %}
+            <div style="width: 700px">
+                <img width=700 src="{{animal.img}}">
+                <p><b>Вид:</b> {{animal.kind.kind}} </p>
+                <p><b>Класс:</b> {{animal.kind.class_name.class_name}}</p>
+                {% if animal.age %}
+                    <p><b>Возраст:</b> {{animal.age}} {% if animal.age == 1 %} год {% elif animal.age > 4 %} лет {% else %} года {% endif %}</p>
+                {% endif %}            
+                <p><b>Страна:</b> {{animal.country.country}} </p>
+                <p align="justify">{{animal.description}} </p>
+            </div>
+            <br>
+            {% endfor %}  
+
+            <h2>Помещения зоопарка: </h2>
+            <ul>
+                {% for placement in placements %}
+                    <li><b>{{placement.name}}</b></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+
+    </div>
+{% endblock %}

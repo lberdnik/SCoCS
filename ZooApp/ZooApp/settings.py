@@ -30,9 +30,13 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'zoo.User'
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '../../'
+LOGOUT_REDIRECT_URL = '../../'
 # Application definition
 
 INSTALLED_APPS = [
+    'zoo.apps.ZooConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "debug_toolbar",
-    'zoo',
 ]
 
 MIDDLEWARE = [
