@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ZooApp.zoo.models import Animal, Class, Complex, Country, Employee, Food, Job, Kind, Placement, User
+from .models import Animal, Class, Complex, Country, Employee, Food, Job, Kind, Placement, User
 
 admin.site.register(Animal)
 admin.site.register(Food)
