@@ -7,8 +7,8 @@
 {% block content %}
             <h1>Помещения зоопарка: </h1>
             <ul>
-                {% for placement in placements %}
-                    <li><b>{{placement.name}}</b></li>
-                {% endfor %}
+            {% for place in placements %}
+            <li><a href="{% url 'placement_detail' place.id%}">{{ place.name }}</a></li>
+            {% endfor %} 
             </ul>
 {% endblock  %}

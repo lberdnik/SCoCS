@@ -8,6 +8,8 @@ from transliterate import translit
 from django.core.validators import RegexValidator
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.views import generic
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Создаем логгер
 logger = logging.getLogger(__name__)
@@ -86,3 +88,26 @@ def registration(request):
         logger.info(f'Invalid data in the registration form.')
         form = RegistrationForm()
     return render(request, 'registration/registration.html', {'form': form})
+
+
+class AnimalDetailView(generic.DetailView):
+    template_name = 'animal_detail.html'
+    model = Animal
+
+
+class PlacementsIndexView(generic.ListView): # лист
+    template_name = 'placements.html'
+    context_object_name = 'placements'
+
+    def get_queryset(self):
+        return Placement.objects.order_by('name')
+
+class PlacementsDetailView(generic.DetailView): # объект
+    template_name = 'animals_in_placements.html'
+    model = Placement
+
+class StatisticsView(LoginRequiredMixin, generic.TemplateView): # страничка
+    template_name = 'statistics'
+    
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)

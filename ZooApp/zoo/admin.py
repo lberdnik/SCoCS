@@ -2,7 +2,17 @@ from django.contrib import admin
 
 from .models import Animal, Class, Complex, Country, Employee, Food, Job, Kind, Placement, User
 
-admin.site.register(Animal)
+
+class AnimalAdminCustom(admin.ModelAdmin):
+    list_display = ('get_kind_name', 'age', 'country', 'placement')
+    list_filter = ('country', )
+    search_fields = ('id',)
+
+    def get_kind_name(self, obj):
+        return obj.kind.kind
+
+
+admin.site.register(Animal, AnimalAdminCustom)
 admin.site.register(Food)
 admin.site.register(Complex)
 admin.site.register(Placement)

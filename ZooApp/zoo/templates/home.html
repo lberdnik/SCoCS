@@ -51,7 +51,11 @@
             {% for animal in animals %}
                 <tr>
                     <td>{{animal.kind.kind}}</td>
-                    <td>{% if animal.age %}{{animal.age}}{% else %}—{% endif %}</td>
+                    <td>{% if animal.arrival_date %}
+                        {{ animal.arrival_date }}
+                    {% else %}
+                        -
+                    {% endif %}</td>
                     <td>{% if animal.gender == 'M' %}Мужской{% else %}Женский{% endif %}</td>
                     <td>{{animal.arrival_date}}</td>
                 </tr>
@@ -105,7 +109,11 @@
                             <td>{{animal.kind.kind}}</td>
                             <td>{% if animal.age %}{{animal.age}}{% else %}—{% endif %}</td>
                             <td>{% if animal.gender == 'M' %}Мужской{% else %}Женский{% endif %}</td>
-                            <td>{{if animal.arrival_date %}{{animal.arrival_date}}{% else %}—{% endif }}</td>
+                            <td>{% if animal.arrival_date %}
+                                {{ animal.arrival_date }}
+                            {% else %}
+                                -
+                            {% endif %}</td>
                             <td>{{animal.placement.name}}</td>
                             <td>{{animal.placement.number}}</td>
                             <td>{{animal.placement.complex_area.complex_name}}</td>
@@ -137,11 +145,14 @@
  
             {% else %}
                 <a href='login'>Войти в систему</a>
-                <br>
-                <a href='placements'>Помещения зоопарка</a>
-            {% endif %}                
+            {% endif %}     
+            <br>
+                <a href='{% url 'placements' %}'>Помещения зоопарка</a>           
             <h2>Животные зоопарка: </h2>
             <p><b>Всего видов:</b> {{animals.count}}</p>
+            {% for animal in animals %}
+            <li><a href="{% url 'animal_detail' animal.id %}">{{ animal.kind.kind }}</a></li>
+            {% endfor %}  
             {% for animal in animals %}
             <div style="width: 700px">
                 <img width=700 src="{{animal.img}}">
