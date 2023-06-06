@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Помещения
+{% endblock %}
+
+{% block content %}
+            <h1>Помещения зоопарка: </h1>
+            <ul>
+                {% for placement in placements %}
+                    <li><b>{{placement.name}}</b></li>
+                {% endfor %}
+            </ul>
+{% endblock  %}

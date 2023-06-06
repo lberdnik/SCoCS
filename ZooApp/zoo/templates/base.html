@@ -5,6 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
+    <script>
+        function updateDateTime()
+        {
+            var currentDateTime = new Date();
+            var formattedDateTime = currentDateTime.toLocaleString();
+            var element = document.getElementById("current-datetime");
+            element.innerHTML = formattedDateTime;
+        }
+        setInterval(updateDateTime, 1000);
+    </script>
 </head>
 <body style="display: flex; justify-content: center;">
     {% block content %}

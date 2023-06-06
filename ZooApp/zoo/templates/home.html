@@ -17,6 +17,7 @@
     </style>
 
     <div>
+        <p style="text-align:center;" id="current-datetime"></p>
         <h1>Zooland — главная страница</h1>
 
         {% if is_superuser %}
@@ -104,7 +105,7 @@
                             <td>{{animal.kind.kind}}</td>
                             <td>{% if animal.age %}{{animal.age}}{% else %}—{% endif %}</td>
                             <td>{% if animal.gender == 'M' %}Мужской{% else %}Женский{% endif %}</td>
-                            <td>{{animal.arrival_date}}</td>
+                            <td>{{if animal.arrival_date %}{{animal.arrival_date}}{% else %}—{% endif }}</td>
                             <td>{{animal.placement.name}}</td>
                             <td>{{animal.placement.number}}</td>
                             <td>{{animal.placement.complex_area.complex_name}}</td>
@@ -136,6 +137,8 @@
  
             {% else %}
                 <a href='login'>Войти в систему</a>
+                <br>
+                <a href='placements'>Помещения зоопарка</a>
             {% endif %}                
             <h2>Животные зоопарка: </h2>
             <p><b>Всего видов:</b> {{animals.count}}</p>
@@ -152,15 +155,6 @@
             </div>
             <br>
             {% endfor %}  
-
-            <h2>Помещения зоопарка: </h2>
-            <ul>
-                {% for placement in placements %}
-                    <li><b>{{placement.name}}</b></li>
-                {% endfor %}
-            </ul>
         {% endif %}
-
-
     </div>
 {% endblock %}
