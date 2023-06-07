@@ -83,6 +83,34 @@ TEMPLATES = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        "main_format": {
+            "format": "{asctime} - {levelname} - {pathname} - {message}",
+            "style": "{",
+        },
+    },
+    'handlers': {
+        "console": {
+            'class': 'logging.StreamHandler',
+            'formatter': 'main_format',
+        },
+        "file": {
+            'class': "logging.FileHandler",
+            'filename': 'information.log',
+            "formatter": "main_format",
+        },
+    },
+    'loggers': {
+        "main": {
+            "handlers": ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 
 WSGI_APPLICATION = 'ZooApp.wsgi.application'

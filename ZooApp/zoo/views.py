@@ -12,7 +12,7 @@ from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Создаем логгер
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("main")
 
 def index(request):
     is_authorized = False
@@ -53,15 +53,7 @@ def index(request):
 
 class RegistrationForm(UserCreationForm):
     address = forms.CharField(max_length=100, required=True)
-    phone_number = forms.CharField(
-        validators=[
-            RegexValidator(
-                regex=r'^\+375 \(\d{2}\) \d{3}-\d{2}-\d{2}$',
-                message='Invalid phone number.'
-            )
-        ],
-        required=True
-    )
+    phone_number = forms.CharField(max_length=11, required=True)
 
     class Meta:
         model = User
