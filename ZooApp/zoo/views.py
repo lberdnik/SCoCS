@@ -83,7 +83,7 @@ def registration(request):
                                            phone_number=request.POST.get('phone_number'))
             client.save()
 
-            return redirect('home')
+            return redirect('index')
     else:
         logger.info(f'Invalid data in the registration form.')
         form = RegistrationForm()

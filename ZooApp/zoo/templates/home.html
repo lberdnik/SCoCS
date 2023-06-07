@@ -153,6 +153,7 @@
             {% for animal in animals %}
             <li><a href="{% url 'animal_detail' animal.id %}">{{ animal.kind.kind }}</a></li>
             {% endfor %}  
+            <br>
             {% for animal in animals %}
             <div style="width: 700px">
                 <img width=700 src="{{animal.img}}">
